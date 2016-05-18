@@ -2,6 +2,7 @@
 
 import sqlite3
 import csv
+import os
 
 def init(conn):
   c = conn.cursor()
@@ -27,6 +28,7 @@ def csv_import(conn, csvfile):
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)'''
   total = 0
   affected = 0
+  print("Reading:", csvfile)
   with open(csvfile, 'r') as f:
     reader = csv.DictReader(f)
     rows = []
@@ -42,12 +44,29 @@ def csv_import(conn, csvfile):
     c.executemany(insert_query, rows)
     affected += c.rowcount
   if total != affected:
-    print("total != affected :", total, "!=", affected)
+    print("  inserted:{}, total:{}".format(affected, total))
   else:
-    print("inserted:", total)
+    print("  inserted:", total)
   conn.commit()
 
-conn = sqlite3.connect('backblaze.db')
+def sqlite_first(conn, query):
+  c = conn.cursor()
+  c.execute(query)
+  return c.fetchone()[0]
 
-init(conn)
-csv_import(conn, '/home/john/Downloads/backblaze/2014/2014-05-01.csv')
+def main(*args):
+  conn = sqlite3.connect('backblaze.db')
+  init(conn)
+  if len(args) == 0:
+    print("Nothing to import! Number of logs:",
+          sqlite_first("SELECT COUNT(*) FROM raw_logs"))
+  else:
+    for path in args:
+      if os.path.isfile(path):
+        csv_import(conn, path)
+      else:
+        print("Not a file:", path)
+
+if __name__ == '__main__':
+  import sys
+  main(*sys.argv[1:])
