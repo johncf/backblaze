@@ -1,6 +1,6 @@
 #!/bin/python3
 
-import sqlite3
+import psycopg2 as pgs
 import csv
 import os
 
@@ -8,7 +8,7 @@ def init(conn):
   c = conn.cursor()
   c.execute('''CREATE TABLE IF NOT EXISTS raw_logs
                (date DATE,        model TEXT,       serial TEXT,      failed BOOLEAN,
-                poh INTEGER,      lba_w INTEGER,    lba_r INTEGER,    load_cc INTEGER)''')
+                poh BIGINT,       lba_w BIGINT,     lba_r BIGINT,     load_cc BIGINT)''')
   c.execute('''CREATE UNIQUE INDEX IF NOT EXISTS raw_logs_uniq on raw_logs (date, serial)''')
   c.execute('''CREATE INDEX IF NOT EXISTS raw_logs_serial on raw_logs (serial)''')
   c.execute('''CREATE INDEX IF NOT EXISTS raw_logs_poh on raw_logs (poh)''')
@@ -23,9 +23,10 @@ def clean(s):
 
 def csv_import(conn, csvfile):
   c = conn.cursor()
-  insert_query = '''INSERT OR IGNORE INTO raw_logs (date, model, serial, failed,
-                                                    poh,  lba_w, lba_r,  load_cc)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)'''
+  insert_query = '''INSERT INTO raw_logs (date, model, serial, failed,
+                                          poh,  lba_w, lba_r,  load_cc)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                    ON CONFLICT DO NOTHING'''
   total = 0
   affected = 0
   print("Reading:", csvfile)
@@ -44,7 +45,7 @@ def csv_import(conn, csvfile):
     c.executemany(insert_query, rows)
     affected += c.rowcount
   if total != affected:
-    print("  inserted:{}, total:{}".format(affected, total))
+    print("  inserted: {}, total: {}".format(affected, total))
   else:
     print("  inserted:", total)
   conn.commit()
@@ -55,11 +56,11 @@ def sqlite_first(conn, query):
   return c.fetchone()[0]
 
 def main(*args):
-  conn = sqlite3.connect('backblaze.db')
+  conn = pgs.connect(database='backblaze', user='john', password='john')
   init(conn)
   if len(args) == 0:
     print("Nothing to import! Number of logs:",
-          sqlite_first("SELECT COUNT(*) FROM raw_logs"))
+          sqlite_first(conn, "SELECT COUNT(*) FROM raw_logs"))
   else:
     for path in args:
       if os.path.isfile(path):
