@@ -7,9 +7,13 @@ import os
 def init(conn):
   c = conn.cursor()
   c.execute('''CREATE TABLE IF NOT EXISTS raw_logs
-               (date DATE,        model TEXT,       serial TEXT,      failed BOOLEAN,
-                poh BIGINT,       lba_w BIGINT,     lba_r BIGINT,     load_cc BIGINT)''')
-  c.execute('''CREATE UNIQUE INDEX IF NOT EXISTS raw_logs_uniq on raw_logs (date, serial)''')
+               (
+                   date DATE,        model TEXT,
+                   serial TEXT,      failed BOOLEAN,
+                   poh BIGINT,       lba_w BIGINT,
+                   lba_r BIGINT,     load_cc BIGINT,
+                   PRIMARY KEY(date, serial)
+               )''')
   c.execute('''CREATE INDEX IF NOT EXISTS raw_logs_serial on raw_logs (serial)''')
   c.execute('''CREATE INDEX IF NOT EXISTS raw_logs_poh on raw_logs (poh)''')
   conn.commit()
