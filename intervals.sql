@@ -1,0 +1,17 @@
+CREATE TABLE load_cc_cumu_diff(val BIGINT PRIMARY KEY, n_diff INT);
+
+INSERT INTO load_cc_cumu_diff (val, n_diff)
+SELECT min_load_cc, SUM(1)
+FROM devices
+WHERE min_load_cc IS NOT NULL
+GROUP BY min_load_cc;
+
+INSERT INTO load_cc_cumu_diff (val, n_diff)
+SELECT max_load_cc, SUM(-1)
+FROM devices
+WHERE max_load_cc IS NOT NULL
+GROUP BY max_load_cc
+ON CONFLICT (val)
+DO UPDATE SET n_diff = load_cc_cumu_diff.n_diff + EXCLUDED.n_diff;
+
+SELECT val, sum(n_diff) OVER (ORDER BY val) FROM load_cc_cumu_diff; -- ORDER BY val DESC;
