@@ -14,4 +14,11 @@ GROUP BY max_load_cc
 ON CONFLICT (val)
 DO UPDATE SET n_diff = load_cc_cumu_diff.n_diff + EXCLUDED.n_diff;
 
-SELECT val, sum(n_diff) OVER (ORDER BY val) FROM load_cc_cumu_diff; -- ORDER BY val DESC;
+SELECT val, sum(n_diff) OVER (ORDER BY val)
+FROM load_cc_cumu_diff; -- ORDER BY val DESC;
+
+SELECT max_load_cc, SUM(SUM(1)) OVER (ORDER BY max_load_cc)
+FROM devices
+WHERE fail_date IS NOT NULL AND
+      max_load_cc IS NOT NULL
+GROUP BY max_load_cc;
