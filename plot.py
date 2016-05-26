@@ -4,7 +4,7 @@ import psycopg2 as pgs
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 
-def plot(ax, xs, ys, ylabel, plttype="plot", yerrs=[], color='r', xlabels=[]):
+def plot(ax, xs, ys, ylabel, plttype="plot", color='r', xlabels=[]):
   if plttype == "scatter":
     ax.scatter(xs, ys, marker="x", color=color)
   else:
@@ -16,9 +16,9 @@ def plot(ax, xs, ys, ylabel, plttype="plot", yerrs=[], color='r', xlabels=[]):
   for tl in ax.get_yticklabels():
     tl.set_color(color)
 
-def plot_twin(ax, xs, ys, ylabel, plttype="plot", yerrs=[], color='b'):
+def plot_twin(ax, xs, ys, ylabel, plttype="plot", color='b'):
   ax2 = ax.twinx()
-  plot(ax2, xs, ys, ylabel, plttype, yerrs, color)
+  plot(ax2, xs, ys, ylabel, plttype, color)
 
 conn = pgs.connect(database='backblaze', user='john', password='john')
 

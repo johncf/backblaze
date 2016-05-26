@@ -6,11 +6,13 @@ CREATE TABLE IF NOT EXISTS devices
     max_date DATE,
     min_load_cc BIGINT,
     max_load_cc BIGINT,
+    min_poh BIGINT,
+    max_poh BIGINT,
     fail_date DATE
 );
 
-INSERT INTO devices (serial, model, min_date, max_date, min_load_cc, max_load_cc)
-SELECT serial, MIN(model), MIN(date), MAX(date), MIN(load_cc), MAX(load_cc)
+INSERT INTO devices (serial, model, min_date, max_date, min_load_cc, max_load_cc, min_poh, max_poh)
+SELECT serial, MIN(model), MIN(date), MAX(date), MIN(load_cc), MAX(load_cc), MIN(poh), MAX(poh)
 FROM raw_logs GROUP BY serial;
 
 -- update fail_date
