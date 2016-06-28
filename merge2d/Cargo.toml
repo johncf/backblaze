@@ -1,0 +1,6 @@
+[package]
+name = "merge2d"
+version = "0.1.0"
+authors = ["critiqjo <john.ch.fr@gmail.com>"]
+
+[dependencies]
