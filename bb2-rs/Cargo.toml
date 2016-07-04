@@ -1,0 +1,9 @@
+[package]
+name = "bb2"
+version = "0.1.0"
+authors = ["critiqjo <john.ch.fr@gmail.com>"]
+
+[dependencies]
+merge2d = { path = "../merge2d" }
+diesel = "0.6"
+diesel_codegen = { version = "0.6", default-features = false, features = ["nightly", "postgres"] }

@@ -34,7 +34,7 @@ for row in c:
   fail_ys.append(row[1])
 
 c = conn.cursor()
-c.execute('''SELECT val, sum(n_diff) OVER (ORDER BY val) FROM load_cc_cumu_diff''')
+c.execute('''SELECT val, SUM(n_diff) OVER (ORDER BY val) FROM load_cc_cumu_diff''')
 pop_xs = []
 pop_ys = []
 for row in c:

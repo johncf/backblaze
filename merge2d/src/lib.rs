@@ -1,7 +1,7 @@
 #[derive(Debug, PartialEq)]
 pub struct Point<X, Y> {
-    x: X,
-    y: Y,
+    pub x: X,
+    pub y: Y,
 }
 
 fn newx_lasty_mut(res: &mut Vec<Point<u32, i32>>, x: u32) -> &mut i32 {
