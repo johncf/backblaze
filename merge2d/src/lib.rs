@@ -1,35 +1,43 @@
+use std::ops::{Add, AddAssign};
+
 #[derive(Debug, PartialEq)]
-pub struct Point<X, Y> {
-    pub x: X,
-    pub y: Y,
+pub struct Point<K, V> {
+    pub k: K,
+    pub v: V,
 }
 
-fn newx_lasty_mut(res: &mut Vec<Point<u32, i32>>, x: u32) -> &mut i32 {
-    let (last_x, last_y) = res.last().map(|p| (Some(p.x), p.y)).unwrap_or((None, 0));
-    match last_x {
-        Some(last_x) if last_x == x => (),
+fn newk_lastv_mut<K, V>(res: &mut Vec<Point<K, V>>, k: K) -> &mut V
+    where K: Copy + Eq, V: Copy + Default
+{
+    let (last_k, last_v) = res.last().map(|p| (Some(p.k), p.v)).unwrap_or((None, V::default()));
+    match last_k {
+        Some(last_k) if last_k == k => (),
         _ => res.push(Point {
-            x: x,
-            y: last_y,
+            k: k,
+            v: last_v,
         }),
     }
-    res.last_mut().map(|p| &mut p.y).unwrap()
+    res.last_mut().map(|p| &mut p.v).unwrap()
 }
 
-pub fn merge(base: &Vec<Point<u32, i32>>, add: &Vec<Point<u32, i32>>) -> Vec<Point<u32, i32>> {
+pub fn merge<K, V, I>(base: &Vec<Point<K, V>>, add: I) -> Vec<Point<K, V>>
+    where K: Copy + Ord,
+          V: Add<Output=V> + AddAssign + Copy + Default,
+          I: IntoIterator<Item=Point<K, V>>,
+{
     let mut res = Vec::new();
-    let mut ai = add.iter().peekable();
-    let mut add_ysum = 0;
+    let mut ai = add.into_iter().peekable();
+    let mut add_vsum = V::default();
     for b in base {
-        while let Some(true) = ai.peek().map(|&a| b.x >= a.x) {
+        while let Some(true) = ai.peek().map(|a| b.k >= a.k) {
             let a = ai.next().unwrap();
-            *newx_lasty_mut(&mut res, a.x) += a.y;
-            add_ysum += a.y;
+            *newk_lastv_mut(&mut res, a.k) += a.v;
+            add_vsum += a.v;
         }
-        *newx_lasty_mut(&mut res, b.x) = b.y + add_ysum;
+        *newk_lastv_mut(&mut res, b.k) = b.v + add_vsum;
     }
     while let Some(a) = ai.next() {
-        *newx_lasty_mut(&mut res, a.x) += a.y;
+        *newk_lastv_mut(&mut res, a.k) += a.v;
     }
     res
 }
@@ -41,21 +49,21 @@ mod tests {
     #[test]
     fn it_works() {
         let b = vec![
-            Point { x: 5, y: 2 },
-            Point { x: 6, y: 3 },
-            Point { x: 7, y: 4 },
+            Point { k: 5, v: 2 },
+            Point { k: 6, v: 3 },
+            Point { k: 7, v: 4 },
         ];
         let a = vec![
-            Point { x: 2, y: 1 },
-            Point { x: 5, y: 2 },
-            Point { x: 9, y: -3 },
+            Point { k: 2, v: 1 },
+            Point { k: 5, v: 2 },
+            Point { k: 9, v: -3 },
         ];
-        assert_eq!(merge(&b, &a), vec![
-            Point { x: 2, y: 1 },
-            Point { x: 5, y: 5 },
-            Point { x: 6, y: 6 },
-            Point { x: 7, y: 7 },
-            Point { x: 9, y: 4 },
+        assert_eq!(merge(&b, a), vec![
+            Point { k: 2, v: 1 },
+            Point { k: 5, v: 5 },
+            Point { k: 6, v: 6 },
+            Point { k: 7, v: 7 },
+            Point { k: 9, v: 4 },
         ])
     }
 }
