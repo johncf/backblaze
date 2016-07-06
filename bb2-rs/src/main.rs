@@ -76,7 +76,7 @@ fn main() {
                        .filter(max_load_cc.is_not_null())
                        .group_by((max_load_cc, max_poh))
                        .order((max_load_cc, max_poh))
-                       .limit(100);
+                       .limit(1000);
         //print_sql!(e);
         e.load::<DevMaxParams>(&con).expect("Error loading posts!")
     }.into_iter().map(|dmp| StepItem {
@@ -85,12 +85,18 @@ fn main() {
                 });
     let mut points: Vec<(i64, Vec<Point<i64, i64>>)> = Vec::new();
     let mut steps = StepIter::new(results);
-    if let Some((p, pi)) = steps.next_step() {
-        points.push((p, pi.map(|item| item.val).collect()));
-    }
     while let Some((p, pi)) = steps.next_step() {
+        if points.len() == 0 {
+            if p == 0 {
+                let new = merge2d::merge(&vec![Point { k: 0, v: 0 }], pi.map(|item| item.val));
+                points.push((p, new));
+                continue;
+            } else {
+                points.push((0, vec![Point { k: 0, v: 0 }]));
+            }
+        }
         let last_new = merge2d::merge(&points.last().unwrap().1, pi.map(|item| item.val));
         points.push((p, last_new));
     }
-    println!("{:#?}", points.last().unwrap());
+    println!("{:#?}\n{:#?}", points[0], points.last().unwrap().1.len());
 }
