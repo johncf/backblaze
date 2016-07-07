@@ -85,18 +85,23 @@ fn main() {
                 });
     let mut points: Vec<(i64, Vec<Point<i64, i64>>)> = Vec::new();
     let mut steps = StepIter::new(results);
+    points.push((0, vec![Point { k: 0, v: 0 }]));
     while let Some((p, pi)) = steps.next_step() {
-        if points.len() == 0 {
-            if p == 0 {
-                let new = merge2d::merge(&vec![Point { k: 0, v: 0 }], pi.map(|item| item.val));
-                points.push((p, new));
-                continue;
-            } else {
-                points.push((0, vec![Point { k: 0, v: 0 }]));
-            }
+        if p == 0 {
+            let first = merge2d::merge(&points[0].1, pi.map(|item| item.val));
+            points[0].1 = first;
+            continue;
         }
         let last_new = merge2d::merge(&points.last().unwrap().1, pi.map(|item| item.val));
         points.push((p, last_new));
     }
-    println!("{:#?}\n{:#?}", points[0], points.last().unwrap().1.len());
+    let max_y = points.last().unwrap().1.last().unwrap().k;
+    for (x, pi) in points.into_iter() {
+        let mut max_z = 0;
+        for yz in pi {
+            println!("{}\t{}\t{}", x, yz.k, yz.v);
+            max_z = std::cmp::max(max_z, yz.v);
+        }
+        println!("{}\t{}\t{}", x, max_y, max_z);
+    }
 }
