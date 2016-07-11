@@ -1,23 +1,17 @@
-#![feature(custom_derive, custom_attribute, plugin)]
-#![plugin(diesel_codegen)]
-
-#[macro_use]
-extern crate diesel;
 extern crate merge2d;
 
-pub const DB_URL: &'static str = "postgres://localhost/backblaze2";
+pub const DB_URL: &'static str = "postgres://john@localhost/backblaze2";
 
-pub mod schema;
+extern crate postgres;
 
-use diesel::prelude::*; // alot of traits + diesel::result::*
-use diesel::pg::PgConnection;
+use postgres::{Connection, SslMode};
 use merge2d::Point;
 use std::iter::Peekable;
 
-#[derive(Debug, Queryable)]
+#[derive(Debug)]
 pub struct DevMaxParams {
-    max_load_cc: Option<i64>,
-    max_poh: Option<i64>,
+    max_load_cc: i64,
+    max_poh: i64,
     total: i64,
 }
 
@@ -65,38 +59,29 @@ impl<'a, I> Iterator for ParamIter<'a, I>
 }
 
 fn main() {
-    let con = PgConnection::establish(DB_URL)
+    let con = Connection::connect(DB_URL, SslMode::None)
         .expect(&format!("Error connecting to {}", DB_URL));
-    let results = {
-        use diesel::expression::sql;
-        use diesel::types::BigInt;
-        use schema::devices::{ table as devices, max_load_cc, max_poh, fail_date };
-        let e = devices.select((max_load_cc, max_poh, sql::<BigInt>("sum(1) as total")))
-                       .filter(fail_date.is_not_null())
-                       .filter(max_load_cc.is_not_null())
-                       .group_by((max_load_cc, max_poh))
-                       .order((max_load_cc, max_poh))
-                       .limit(1000);
-        //print_sql!(e);
-        e.load::<DevMaxParams>(&con).expect("Error loading posts!")
-    }.into_iter().map(|dmp| StepItem {
-                    key: dmp.max_load_cc.unwrap(),
-                    val: Point { k: dmp.max_poh.unwrap(), v: dmp.total },
-                });
+    let rows = &con.query("SELECT max_load_cc, max_poh, sum(1) as total FROM devices WHERE \
+                          fail_date IS NOT NULL AND max_load_cc IS NOT NULL \
+                          GROUP BY max_load_cc, max_poh ORDER BY max_load_cc, max_poh LIMIT 1000", &[])
+                   .expect("Error loading posts!");
+    let results = rows.iter().map(|row| StepItem {
+        key: row.get("max_load_cc"),
+        val: Point { k: row.get("max_poh"), v: row.get("total") },
+    });
     let mut points: Vec<(i64, Vec<Point<i64, i64>>)> = Vec::new();
     let mut steps = StepIter::new(results);
     points.push((0, vec![Point { k: 0, v: 0 }]));
     while let Some((p, pi)) = steps.next_step() {
-        if p == 0 {
-            let first = merge2d::merge(&points[0].1, pi.map(|item| item.val));
-            points[0].1 = first;
-            continue;
-        }
         let last_new = merge2d::merge(&points.last().unwrap().1, pi.map(|item| item.val));
-        points.push((p, last_new));
+        if p == 0 {
+            points[0].1 = last_new;
+        } else {
+            points.push((p, last_new));
+        }
     }
     let max_y = points.last().unwrap().1.last().unwrap().k;
-    for (x, pi) in points.into_iter() {
+    for (x, pi) in points {
         let mut max_z = 0;
         for yz in pi {
             println!("{}\t{}\t{}", x, yz.k, yz.v);
