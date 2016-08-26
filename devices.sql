@@ -23,28 +23,38 @@ WHERE devices.serial = failures.serial;
 
 -- inconsistencies
 
-CREATE TABLE IF NOT EXISTS devices_blacklist
+CREATE TABLE IF NOT EXISTS blacklist
 (
     serial TEXT PRIMARY KEY,
-    model TEXT -- FYI
+    model TEXT, -- FYI
+    reason TEXT
 );
 
-INSERT INTO devices_blacklist (serial, model)
-SELECT devices.serial, devices.model -- see: max_load_cc, load_cc, max_date
+-- max_load_cc not at fail_date
+INSERT INTO blacklist (serial, model, reason)
+SELECT devices.serial, devices.model, 'zombie_usage'
+FROM devices, raw_logs
+WHERE (raw_logs.serial = devices.serial AND date = fail_date) AND
+      max_load_cc != load_cc
+ON CONFLICT DO NOTHING;
+
+-- max_load_cc not at max_date
+INSERT INTO blacklist (serial, model, reason)
+SELECT devices.serial, devices.model, 'max_mismatch'
 FROM devices, raw_logs
 WHERE (raw_logs.serial = devices.serial AND date = max_date) AND
       max_load_cc != load_cc
 ON CONFLICT DO NOTHING;
 
-INSERT INTO devices_blacklist (serial, model)
-SELECT devices.serial, devices.model -- see: min_load_cc, load_cc, min_date
+-- min_load_cc not at min_date
+INSERT INTO blacklist (serial, model, reason)
+SELECT devices.serial, devices.model, 'min_mismatch'
 FROM devices, raw_logs
 WHERE (raw_logs.serial = devices.serial AND date = min_date) AND
       min_load_cc != load_cc
 ON CONFLICT DO NOTHING;
 
-DELETE FROM raw_logs WHERE serial IN (SELECT serial FROM devices_blacklist);
-DELETE FROM devices WHERE serial IN (SELECT serial FROM devices_blacklist);
+DELETE FROM devices WHERE serial IN (SELECT serial FROM blacklist);
 
 SELECT model, COUNT(*)
 FROM devices
