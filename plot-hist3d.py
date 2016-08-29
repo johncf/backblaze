@@ -7,30 +7,36 @@ import matplotlib.pyplot as plt
 import numpy as np
 import math
 
+table = 'lcc_poh_hist'
+var2 = 'lcc'
+var2_factor = 2000
+#table = 'io_poh_hist'
+#var2 = 'io'
+#var2_factor = int(5e8)
+
 fig = plt.figure()
 ax = fig.gca(projection='3d')
 
 xs = np.arange(0, 50000, 50)
-ys = np.arange(0, 2000000, 2000)
+ys = np.arange(0, 1000*var2_factor, var2_factor)
 
 xv, yv = np.meshgrid(xs, ys)
 zv = np.zeros((1000, 1000))
 
 conn = pgs.connect(database='backblaze2', user='john', password='john')
 
-c = conn.cursor()
+cur = conn.cursor()
+cur.execute('''SELECT poh, {0}, count FROM {1}'''.format(var2, table))
 
-c.execute('''SELECT poh, lcc, count FROM lcc_poh_hist''')
-
-for row in c:
+for row in cur:
   xi = row[0]/50
-  yi = row[1]/2000
+  yi = row[1]/var2_factor
   if xi < 1000 and yi < 1000:
-    zv[xi, yi] = math.log10(row[2])
+    zv[yi, xi] = math.log10(row[2])
 
-ax.view_init(azim=40) #310
+ax.view_init(azim=40) #130
 surf = ax.plot_surface(xv, yv, zv, rstride=10, cstride=10, cmap=cm.coolwarm,
                        linewidth=0, antialiased=False)
 
 fig.set_size_inches(16, 12)
-fig.savefig("lcc-poh-hist.svg", bbox_inches="tight", dpi=96)
+fig.savefig("{0}-poh-hist.svg".format(var2), bbox_inches="tight", dpi=96)

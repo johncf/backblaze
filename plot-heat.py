@@ -1,25 +1,39 @@
 #!/bin/python2
 
-#from mpl_toolkits.mplot3d import proj3d
 from matplotlib import cm
 import psycopg2 as pgs
 import matplotlib.pyplot as plt
 import numpy as np
 import math
 
+table = 'lcc_poh_hist_st4kdm'
+var2 = 'lcc'
+var2_factor = 500
+
+#table = 'io_poh_hist_st4kdm'
+#var2 = 'io'
+#var2_factor = int(5e8)
+
+poh_factor = 30
+
+#table = 'lcc_poh_hist_st4kdm_log'
+#var2 = 'lcc'
+#var2_factor = 1
+var2_log_factor = 1 #6.0/1000
+
 zv = np.zeros((1000, 1000))
 
 conn = pgs.connect(database='backblaze2', user='john', password='john')
 cur = conn.cursor()
-cur.execute('''SELECT poh, lcc, count FROM lcc_poh_hist''')
+cur.execute('''SELECT poh, {0}, count FROM {1}'''.format(var2, table))
 
 for row in cur:
-  poh_i = row[0]/50
-  lcc_i = row[1]/2000
-  if lcc_i > 0 and poh_i < 1000 and lcc_i < 1000:
-    zv[lcc_i, poh_i] = math.log10(row[2])
+  poh_i = row[0]/poh_factor
+  var2_i = row[1]/var2_factor
+  if poh_i < 1000 and var2_i < 1000: # and var2_i > 0:
+    zv[var2_i, poh_i] = math.log10(row[2])
 
-plt.clf()
-plt.imshow(zv, origin='lower', extent=(0, 50e3, 0, 2e6), aspect=2.0/100)
+fig, ax = plt.subplots(figsize=(12, 6))
+ax.imshow(zv, origin='lower', extent=(0, poh_factor*1e3, 0, var2_factor*var2_log_factor*1e3), aspect=1.0/2*poh_factor/var2_factor/var2_log_factor)
 
-plt.savefig("lcc-poh-heat.svg", bbox_inches="tight", dpi=96)
+fig.savefig("{0}-plots/heat-st4kdm-2.svg".format(var2), bbox_inches="tight", dpi=96)
