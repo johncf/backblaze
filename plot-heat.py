@@ -6,26 +6,32 @@ import matplotlib.pyplot as plt
 import numpy as np
 import math
 
-table = 'lcc_poh_hist_st4kdm'
-var2 = 'lcc'
-var2_factor = 500
+#table = 'lcc_poh_hist_st4kdm'
+#var2 = 'lcc'
+#var2_factor = 120
 
 #table = 'io_poh_hist_st4kdm'
 #var2 = 'io'
 #var2_factor = int(5e8)
+#var2_log_factor = 1
 
 poh_factor = 30
 
 #table = 'lcc_poh_hist_st4kdm_log'
 #var2 = 'lcc'
 #var2_factor = 1
-var2_log_factor = 1 #6.0/1000
+#var2_log_factor = 6.0/1000
+
+table = 'io_poh_hist_st4kdm_log'
+var2 = 'io'
+var2_factor = 1
+var2_log_factor = 12.0/1000
 
 zv = np.zeros((1000, 1000))
 
 conn = pgs.connect(database='backblaze2', user='john', password='john')
 cur = conn.cursor()
-cur.execute('''SELECT poh, {0}, count FROM {1}'''.format(var2, table))
+cur.execute('''SELECT poh, {0}_log_83, count FROM {1}'''.format(var2, table))
 
 for row in cur:
   poh_i = row[0]/poh_factor
