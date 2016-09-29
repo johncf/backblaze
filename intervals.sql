@@ -22,3 +22,19 @@ FROM devices
 WHERE fail_date IS NOT NULL AND
       max_load_cc IS NOT NULL
 GROUP BY max_load_cc;
+
+CREATE TABLE poh_cumu_diff(val BIGINT PRIMARY KEY, n_diff INT);
+
+INSERT INTO poh_cumu_diff (val, n_diff)
+SELECT min_poh, SUM(1)
+FROM devices
+WHERE min_poh IS NOT NULL
+GROUP BY min_poh;
+
+INSERT INTO poh_cumu_diff (val, n_diff)
+SELECT max_poh, SUM(-1)
+FROM devices
+WHERE max_poh IS NOT NULL
+GROUP BY max_poh
+ON CONFLICT (val)
+DO UPDATE SET n_diff = poh_cumu_diff.n_diff + EXCLUDED.n_diff;

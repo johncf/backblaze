@@ -7,13 +7,20 @@ from scipy.signal import savgol_filter
 import numpy as np
 import math
 
-conn = pgs.connect(database='backblaze', user='john', password='john')
+conn = pgs.connect(database='backblaze2', user='john', password='john')
+
+outfile = "failure-rate-poh-3.svg"
+param_name = "max_poh"
+param_max_val = 60000
+param_cumu_diff_tb = "poh_cumu_diff"
+num_parts = 2000 # for interpolated sampling
+window_size, poly_order = 39, 4 # for savgol filter
 
 c = conn.cursor()
-c.execute('''SELECT max_load_cc, SUM(SUM(1)) OVER (ORDER BY max_load_cc)
+c.execute('''SELECT {0}, SUM(SUM(1)) OVER (ORDER BY {0})
              FROM devices
-             WHERE fail_date IS NOT NULL AND max_load_cc IS NOT NULL
-             GROUP BY max_load_cc''')
+             WHERE fail_date IS NOT NULL AND {0} IS NOT NULL AND {0} < {1}
+             GROUP BY {0}'''.format(param_name, param_max_val))
 fail_xs = []
 fail_ys = []
 for row in c:
@@ -21,7 +28,7 @@ for row in c:
   fail_ys.append(row[1])
 
 c = conn.cursor()
-c.execute('''SELECT val, SUM(n_diff) OVER (ORDER BY val) FROM load_cc_cumu_diff''')
+c.execute('''SELECT val, SUM(n_diff) OVER (ORDER BY val) FROM {0} WHERE val < {1}'''.format(param_cumu_diff_tb, param_max_val))
 obs_xs = []
 obs_ys = []
 for row in c:
@@ -30,53 +37,53 @@ for row in c:
 
 conn.close()
 
-fx = np.array(fail_xs[:-12])
-fy = np.array(fail_ys[:-12])
+fx = np.array(fail_xs)
+fy = np.array(fail_ys)
 
 # interpolate
 f_itp = interp1d(fx, fy, kind='linear')
 
-#x_f = np.logspace(0., math.log(fx.max(), 10), num=1000)
-x_f = np.linspace(1., fx.max(), num=2000)
+fx_min = max(1., fx.min())
+fx_max = fx.max()
+x_f = np.linspace(fx_min, fx_max, num=num_parts)
 
 # smooth
-window_size, poly_order = 39, 4
 y_f_sg = savgol_filter(f_itp(x_f), window_size, poly_order)
-dydx_f_sg = savgol_filter(f_itp(x_f), window_size, poly_order, deriv=1)
+dydx_f_sg = savgol_filter(f_itp(x_f), window_size, poly_order, deriv=1) / (fx_max - fx_min) * num_parts
 
 fig, (ax1, ax2, ax3) = plt.subplots(3, 1, sharex=True)
 
-ax3.set_xlabel("Load cycles")
+ax3.set_xlabel("Power-on hours")
 
-#ax1.set_xscale("log")
 ax1.set_ylabel("Cumulative failures")
+ax1.set_ylim(0, 6000)
 
-#ax1.scatter(fx[1:100], fy[1:100], c='b', marker='x')
-#ax1.scatter(x_f, f_itp(x_f), c='r', marker='o')
+#ax1.scatter(fx[1:], fy[1:], c='b', marker='.')
 ax1.plot(x_f, y_f_sg, 'g-')
 
 ax12 = ax1.twinx()
 ax12.set_ylabel("Derivative of cumulative failures")
 ax12.set_yscale("log")
-#ax12.set_ylim(-1, 20)
+ax12.set_ylim(1e-4, 1)
 ax12.plot(x_f, dydx_f_sg, 'r-')
 
-ox = np.array(obs_xs[:-200])
-oy = np.array(obs_ys[:-200])
+ox = np.array(obs_xs)
+oy = np.array(obs_ys)
 
 o_itp = interp1d(ox, oy, kind='linear')
 x_o = np.linspace(1., ox.max(), num=2000)
 
 ax2.set_ylabel("Number of disks under observation")
-#ax2.set_xscale("log")
 ax2.set_yscale("log")
+ax2.set_ylim(10, 1e5)
 ax2.plot(x_o, o_itp(x_o))
 #ax2.scatter(ox[1:], oy[1:], marker='.')
 
 ax3.set_ylabel("Failure rate")
 ax3.set_yscale("log")
+ax3.set_ylim(1e-7, 1e-2)
 y_fr = [y/o_itp(x) for (x, y) in zip(x_f, dydx_f_sg)]
 ax3.plot(x_f, y_fr)
 
 fig.set_size_inches(8, 12)
-fig.savefig("failure-rate.svg", bbox_inches="tight")
+fig.savefig(outfile, bbox_inches="tight")
