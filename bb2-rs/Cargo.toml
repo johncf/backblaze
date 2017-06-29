@@ -1,8 +1,0 @@
-[package]
-name = "bb2"
-version = "0.1.0"
-authors = ["critiqjo <john.ch.fr@gmail.com>"]
-
-[dependencies]
-merge2d = { path = "../merge2d" }
-postgres = "^0.11"

@@ -1,14 +1,15 @@
 #!/bin/python2
 
-import psycopg2 as pgs
 from plot2d import subplots, plot
 import sys
+
+import localdb
 
 fname = sys.argv[1].strip()
 if len(fname) == 0:
   sys.exit("No file name specified!")
 
-conn = pgs.connect(database='backblaze2', user='john', password='john')
+conn = localdb.connect()
 
 c = conn.cursor()
 

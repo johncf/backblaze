@@ -1,11 +1,12 @@
 #!/bin/python2
 
-from mpl_toolkits.mplot3d import proj3d
-from matplotlib import cm
-import psycopg2 as pgs
 import matplotlib.pyplot as plt
 import numpy as np
 import math
+from mpl_toolkits.mplot3d import proj3d
+from matplotlib import cm
+
+import localdb
 
 table = 'lcc_poh_hist'
 var2 = 'lcc'
@@ -23,7 +24,7 @@ ys = np.arange(0, 1000*var2_factor, var2_factor)
 xv, yv = np.meshgrid(xs, ys)
 zv = np.zeros((1000, 1000))
 
-conn = pgs.connect(database='backblaze2', user='john', password='john')
+conn = localdb.connect()
 
 cur = conn.cursor()
 cur.execute('''SELECT poh, {0}, count FROM {1}'''.format(var2, table))

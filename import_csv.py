@@ -1,8 +1,8 @@
 #!/bin/python3
 
-import psycopg2 as pgs
 import csv
 import os
+import localdb
 
 def init(conn):
   c = conn.cursor()
@@ -60,7 +60,7 @@ def sqlite_first(conn, query):
   return c.fetchone()[0]
 
 def main(*args):
-  conn = pgs.connect(database='backblaze2', user='john', password='john')
+  conn = localdb.connect()
   init(conn)
   if len(args) == 0:
     print("Nothing to import! Number of logs:",

@@ -1,10 +1,11 @@
 #!/bin/python2
 
 from matplotlib import cm
-import psycopg2 as pgs
 import matplotlib.pyplot as plt
 import numpy as np
 import math
+
+import localdb
 
 #table = 'lcc_poh_hist_st4kdm'
 #var2 = 'lcc'
@@ -29,7 +30,7 @@ var2_log_factor = 12.0/1000
 
 zv = np.zeros((1000, 1000))
 
-conn = pgs.connect(database='backblaze2', user='john', password='john')
+conn = localdb.connect()
 cur = conn.cursor()
 cur.execute('''SELECT poh, {0}_log_83, count FROM {1}'''.format(var2, table))
 

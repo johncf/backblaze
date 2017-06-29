@@ -1,9 +1,10 @@
 #!/bin/python2
 
-import psycopg2 as pgs
 from plot2d import subplots, plot, plot_twin
 
-conn = pgs.connect(database='backblaze', user='john', password='john')
+import localdb
+
+conn = localdb.connect()
 
 c = conn.cursor()
 c.execute('''SELECT max_load_cc, SUM(SUM(1)) OVER (ORDER BY max_load_cc)
