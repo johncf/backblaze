@@ -17,5 +17,9 @@ preprocess the data to make it ready for consumption by other scripts.
 All other python scripts in the directory is used to generate various types of
 plots from the data.
 
+To see the generated plots, see [backblaze-plots][].
+
 [backblaze]: https://www.backblaze.com/b2/hard-drive-test-data.html
 [pgdb]: localdb.py#L4
+[queries]: queries
+[backblaze-plots]: https://gitlab.com/johncf/backblaze-plots
