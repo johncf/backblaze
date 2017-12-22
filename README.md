@@ -14,7 +14,6 @@ plots from the data.
 
 To see the generated plots, see [backblaze-plots][].
 
-[pgdb]: localdb.py#L4
 [backblaze-plots]: https://gitlab.com/johncf/backblaze-plots
 [data directory]: data
 [queries directory]: queries

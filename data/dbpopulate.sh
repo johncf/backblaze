@@ -13,6 +13,5 @@ for y in {2014..2017}; do
     for m in {01..12}; do
         pypy3 filter_csv.py $FILTD/${y}-${m}-xx.csv ${y}/${y}-${m}-*.csv
         ./dbcopy_csv.sh $FILTD/${y}-${m}-xx.csv
-        echo
     done
 done

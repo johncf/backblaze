@@ -9,13 +9,21 @@ def eprint(*args):
 
 def csv_filter(csvwriter, infile):
   total = 0
+  ignored = 0
   eprint("Reading:", infile)
   with open(infile, 'r') as f:
     reader = csv.DictReader(f)
     for row in reader:
-      csvwriter.writerow(row)
+      if len(row["serial_number"]) == 0:
+        eprint("  Ignoring row #" + str(total + 1) + " with empty serial. " +
+                 "Model: '" + row["model"] + "'")
+        ignored += 1
+      else:
+        csvwriter.writerow(row)
       total += 1
   eprint("  Read", total, "rows.")
+  if ignored > 0:
+    eprint("  Ignored", ignored, "rows.")
 
 def main(outpath, *inpaths):
   if len(inpaths) == 0:

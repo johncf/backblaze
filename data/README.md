@@ -1,4 +1,4 @@
-# Database Scripts
+# Prepare Database
 
 Download the data from [their official page][backblaze], and extract it to
 directories corresponding to each year.
