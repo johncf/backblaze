@@ -9,9 +9,9 @@ directories corresponding to each year.
 
 This is the main script that when executed will create a postgres database
 named `backblaze`, create a table named `raw_logs` with structure defined in
-`db.sql` and populate it with data from Backblaze. This script assumes that the
-current directory contains directories named `2014`, `2015`, `2016` and `2017`
-which contains the csv data files from Backblaze.
+`base.sql` and populate it with data from Backblaze. This script assumes that
+the current directory contains directories named `2014`, `2015`, `2016` and
+`2017` which contains the csv data files from Backblaze.
 
 This uses `filter_csv.py` to create a csv file each for every month, which only
 contains what is needed for the database. It then calls `dbcopy_csv.sh` with

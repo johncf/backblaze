@@ -15,3 +15,5 @@ for y in {2014..2017}; do
         ./dbcopy_csv.sh $FILTD/${y}-${m}-xx.csv
     done
 done
+
+psql backblaze -f proc.sql
