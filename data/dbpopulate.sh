@@ -16,4 +16,7 @@ for y in {2014..2017}; do
     done
 done
 
-psql backblaze -f proc.sql
+set +x
+
+echo "Done!"
+echo "Edit prepare.sql to specify the disk model of interest, then run process.sh"
