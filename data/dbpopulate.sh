@@ -16,6 +16,8 @@ for y in {2014..2017}; do
     done
 done
 
+time psql backblaze -f index1.sql
+
 set +x
 
 echo "Done!"
