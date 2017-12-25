@@ -1,3 +1,4 @@
+-- see original here: https://gitlab.com/johncf/failure-analysis
 -- observed population over power_hrs -- N(t)
 COPY (WITH cgs AS (SELECT power_hrs,
                           SUM(contrib_step) AS contrib_group

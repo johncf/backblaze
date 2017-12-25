@@ -5,18 +5,19 @@ set -e -x
 # create database 'backblaze' if not exists
 psql -lqt | cut -d \| -f 1 | grep -qw backblaze || createdb backblaze
 
-psql backblaze -f db.sql
+psql backblaze -f queries/base.sql
 
 for y in {2014..2017}; do
-    FILTD=${y}_fil
+    FILTD=data/${y}_fil
     mkdir -p $FILTD
     for m in {01..12}; do
-        pypy3 filter_csv.py $FILTD/${y}-${m}-xx.csv ${y}/${y}-${m}-*.csv
-        ./dbcopy_csv.sh $FILTD/${y}-${m}-xx.csv
+        # NOTE: Use `pypy3` below for faster execution.
+        ./filter_csv.py $FILTD/${y}-${m}-xx.csv data/${y}/${y}-${m}-*.csv
+        psql backblaze -f queries/copy-raw.sql < $FILTD/${y}-${m}-xx.csv
     done
 done
 
-time psql backblaze -f index1.sql
+psql backblaze -f queries/index1.sql
 
 set +x
 
