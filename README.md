@@ -47,21 +47,21 @@ percentage.
 
 [`basic-plot.py`]: https://gitlab.com/johncf/failure-analysis/blob/master/basic-plot.py
 
-#### ST4000DM000
+#### Seagate ST4000DM000
 
 **Total disk-years observed:** 87,647 <br>
 **Total failures observed:** 2,587 <br>
 **Mean AFR over lifetime:** 3.0%
 
-![fr-1](https://i.imgur.com/VRJQG8ql.png)
+![fr-1](https://i.imgur.com/NeEaTV4.png)
 
-#### ST3000DM001
+#### Seagate ST3000DM001
 
-**Total disk-years observed:** 3481 <br>
-**Total failures observed:** 1454 <br>
+**Total disk-years observed:** 3,481 <br>
+**Total failures observed:** 1,454 <br>
 **Mean AFR over lifetime:** 42%
 
-![fr-2](https://i.imgur.com/Y4kzn5Yl.png)
+![fr-2](https://i.imgur.com/aK4yewa.png)
 
 **Comments:** Abnormally high failure rate. The graph below shows the number of
 failures reported daily for this model which is too high for the number of
@@ -75,26 +75,26 @@ This might be due to the failure detection system being too conservative and
 making false alarms for behaviors that the manufacturer might consider
 "normal."
 
-#### ST31500541AS
+#### Seagate ST31500541AS
 
-**Total disk-years observed:** 2825 <br>
+**Total disk-years observed:** 2,825 <br>
 **Total failures observed:** 274 <br>
 **Mean AFR over lifetime:** 9.7%
 
-![fr-3](https://i.imgur.com/LPIvrzGl.png)
+![fr-3](https://i.imgur.com/qfrZDLN.png)
 
 #### Hitachi HDS722020ALA330
 
-**Total disk-years observed:** 11898 <br>
+**Total disk-years observed:** 11,898 <br>
 **Total failures observed:** 202 <br>
 **Mean AFR over lifetime:** 1.7%
 
-![fr-4](https://i.imgur.com/krPjb8Bl.png)
+![fr-4](https://i.imgur.com/zyWgfhT.png)
 
 #### WDC WD30EFRX
 
-**Total disk-years observed:** 3301 <br>
+**Total disk-years observed:** 3,301 <br>
 **Total failures observed:** 166 <br>
 **Mean AFR over lifetime:** 5.0%
 
-![fr-5](https://i.imgur.com/fsYYpLvl.png)
+![fr-5](https://i.imgur.com/9lcXpOm.png)
