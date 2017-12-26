@@ -53,7 +53,9 @@ percentage.
 **Total failures observed:** 2,587 <br>
 **Mean AFR over lifetime:** 3.0%
 
-![fr-1](https://i.imgur.com/NeEaTV4.png)
+![fr-1](https://i.imgur.com/Z5c9fEB.png)
+
+**Comments:** Failure rate seems to have a steadily increasing trend as disks age.
 
 #### Seagate ST3000DM001
 
@@ -61,19 +63,21 @@ percentage.
 **Total failures observed:** 1,454 <br>
 **Mean AFR over lifetime:** 42%
 
-![fr-2](https://i.imgur.com/aK4yewa.png)
+![fr-2](https://i.imgur.com/BanAPND.png)
 
-**Comments:** Abnormally high failure rate. The graph below shows the number of
-failures reported daily for this model which is too high for the number of
-disks deployed. For comparison, the same for the previous model is also shown
-below.
+**Comments:** Abnormally high failure rate (note the Y-scale). The graph below
+shows the number of failures reported daily for this model which is too high
+for the number of disks deployed.
 
 ![fpd-2](https://i.imgur.com/aQFithX.png)
+
+For comparison, the same for the previous model is shown below.
+
 ![fpd-1](https://i.imgur.com/QLwuqOW.png)
 
-This might be due to the failure detection system being too conservative and
-making false alarms for behaviors that the manufacturer might consider
-"normal."
+This _might_ be due to the failure detection system being too conservative and
+marking disks "failed" due to events/measures that the manufacturer might
+consider "normal."
 
 #### Seagate ST31500541AS
 
@@ -81,7 +85,11 @@ making false alarms for behaviors that the manufacturer might consider
 **Total failures observed:** 274 <br>
 **Mean AFR over lifetime:** 9.7%
 
-![fr-3](https://i.imgur.com/qfrZDLN.png)
+![fr-3](https://i.imgur.com/JOTCdtD.png)
+
+**Comments:** The failure rate graph is too noisy due to lack of data, but it
+seems to have an almost constant (or slightly decreasing) failure rate over
+first 6 years of age.
 
 #### Hitachi HDS722020ALA330
 
@@ -89,7 +97,11 @@ making false alarms for behaviors that the manufacturer might consider
 **Total failures observed:** 202 <br>
 **Mean AFR over lifetime:** 1.7%
 
-![fr-4](https://i.imgur.com/zyWgfhT.png)
+![fr-4](https://i.imgur.com/0xNIsJz.png)
+
+**Comments:** The first half is very noisy since most of the disks are more
+than 3 years old. The failure rate remained low at around 2% for the span of
+age we had significant data of.
 
 #### WDC WD30EFRX
 
@@ -97,4 +109,15 @@ making false alarms for behaviors that the manufacturer might consider
 **Total failures observed:** 166 <br>
 **Mean AFR over lifetime:** 5.0%
 
-![fr-5](https://i.imgur.com/9lcXpOm.png)
+![fr-5](https://i.imgur.com/VkJI32r.png)
+
+**Comments:** The failure rate seems to have a decreasing trend over age,
+dropping from around 7% during the first year to around 2% in the third year.
+
+### Conclusions
+
+More than 10,000 disk-years of observation seems to be needed to generate
+low-noise plots of failure rate over age of a hard drive model.
+
+No hard generalizations can be made about the pattern of failure rate over age,
+such as constant/increasing/decreasing, for all drive models.
