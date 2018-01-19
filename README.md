@@ -75,7 +75,7 @@ For comparison, the same for the previous model is shown below.
 
 ![fpd-1](https://i.imgur.com/QLwuqOW.png)
 
-This _might_ be due to the failure detection system being too conservative and
+This _might_ be due to the failure detection system being too aggressive and
 marking disks "failed" due to events/measures that the manufacturer might
 consider "normal."
 
