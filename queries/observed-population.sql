@@ -13,4 +13,4 @@ COPY (WITH cgs AS (SELECT power_hrs,
       SELECT power_hrs,
              SUM(contrib_group) OVER (ORDER BY power_hrs) AS observed_pop
       FROM cgs)
-TO STDOUT WITH CSV DELIMITER ','
+TO STDOUT WITH CSV DELIMITER ',';
