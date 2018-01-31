@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-echo > metadata
+truncate -s0 metadata
 tail -n+2 popular-models | tr -s ' ' | cut -f1-2 -d'|' | while read line
 do
     IFS='|' read -r -a array <<< "$line"
