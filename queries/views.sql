@@ -9,13 +9,13 @@ SELECT r.datestamp AS datestamp,
        r.lba_r AS blocks_read,
        r.lba_w AS blocks_written
 FROM raw_logs AS r
-WHERE r.model = 'ST4000DM000';
+WHERE r.model = 'MMOODDEELL';
 
 CREATE VIEW disk_fails AS
 SELECT r.datestamp AS datestamp,
        r.serial AS serial_no
 FROM raw_logs AS r
-WHERE r.model = 'ST4000DM000'
+WHERE r.model = 'MMOODDEELL'
 AND   r.failed;
 
 CREATE VIEW disk_summary AS
