@@ -22,5 +22,4 @@ done
 set +x
 
 echo "Done!"
-echo "Now you may do: make Results.md"
-echo "Then run process-all.sh"
+echo "Now you may run: make Results.md"

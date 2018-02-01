@@ -30,7 +30,10 @@ popular-models:
 	psql backblaze -f queries/index-models.sql
 	psql backblaze -f queries/popular-models.sql | nl -nrz -w2 -s'|' - > popular-models
 
-minify-plots: plot-all
+plot-scour: plot-all
 	./scour-plots.sh | bash
 
-.PHONY: help db-init db-deindex minify-plots
+plot-png: plot-all plot-metadata
+	cut -f1 -d'|' plot-metadata | sed -e 's/^\(.*\)\.svg$$/inkscape -e \1.png \1.svg/' | bash
+
+.PHONY: help db-init db-deindex plot-scour plot-png
