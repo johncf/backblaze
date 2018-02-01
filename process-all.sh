@@ -1,13 +1,12 @@
 #!/bin/bash
 set -e
 truncate -s0 metadata
-tail -n+2 popular-models | tr -s ' ' | cut -f1-2 -d'|' | while read line
+cat popular-models | cut -f1-2 -d'|' | while read line
 do
     IFS='|' read -r -a array <<< "$line"
-    id=${array[0]%% }
-    model=${array[1]## }
-    model=${model%% }
-    if wc -l $id-fails.csv 2>\dev\null && wc -l $id-obs.csv 2>\dev\null; then
+    id=${array[0]}
+    model=${array[1]}
+    if wc -l $id-fails.csv 2>/dev/null && wc -l $id-obs.csv 2>/dev/null; then
         echo "Skipping $model"
     else
         echo "Processing ${model}"
