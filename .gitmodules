@@ -1,0 +1,3 @@
+[submodule "failysis"]
+	path = failysis
+	url = https://github.com/johncf/failysis.git
