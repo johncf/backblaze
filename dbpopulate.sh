@@ -19,10 +19,8 @@ for y in {2013..2017}; do
     done
 done
 
-psql backblaze -f queries/index1.sql
-
 set +x
 
 echo "Done!"
-echo "Run get-popular-models.sh script to generate popular-models table."
+echo "Now you may do: make Results.md"
 echo "Then run process-all.sh"
