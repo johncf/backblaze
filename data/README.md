@@ -1,7 +1,7 @@
 # Data Directory
 
-Create directories named `2014`, `2015`, `2016` and `2017` here and extract
-corresponding data files into them from Backblaze.
+Create directories named `2013`, `2014` etc. here and extract corresponding
+csv data files into them from Backblaze dataset.
 
 ### View Data: `smart_csv2json.py`
 
