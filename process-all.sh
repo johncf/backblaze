@@ -11,7 +11,7 @@ do
     IFS='|' read -r -a array <<< "$line"
     id=${array[0]}
     model=${array[1]}
-    PLOTF=$PLOTDIR/$id-plot.csv
+    PLOTF=$PLOTDIR/$id-plot.svg
     FAILS=$PROCDIR/$id-fails.csv
     OBSCT=$PROCDIR/$id-obsct.csv
     if wc -l $FAILS 2>/dev/null && wc -l $OBSCT 2>/dev/null; then
