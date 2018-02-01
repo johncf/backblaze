@@ -1,24 +1,32 @@
 #!/bin/bash
 set -e
-truncate -s0 metadata
+
+PROCDIR=processed
+PLOTDIR=plots
+mkdir -p $PROCDIR $PLOTDIR
+
+truncate -s0 plot-metadata
 cat popular-models | cut -f1-2 -d'|' | while read line
 do
     IFS='|' read -r -a array <<< "$line"
     id=${array[0]}
     model=${array[1]}
-    if wc -l $id-fails.csv 2>/dev/null && wc -l $id-obs.csv 2>/dev/null; then
+    PLOTF=$PLOTDIR/$id-plot.csv
+    FAILS=$PROCDIR/$id-fails.csv
+    OBSCT=$PROCDIR/$id-obsct.csv
+    if wc -l $FAILS 2>/dev/null && wc -l $OBSCT 2>/dev/null; then
         echo "Skipping $model"
     else
         echo "Processing ${model}"
         psql backblaze -f <(sed "s/MMOODDEELL/${model}/g" queries/views.sql)
-        psql backblaze -f queries/cumulative-failures.sql > $id-fails.csv || {
-            rm $id-fails.csv && false
+        psql backblaze -f queries/cumulative-failures.sql > $FAILS || {
+            rm $FAILS && false
         }
-        wc -l $id-fails.csv
-        psql backblaze -f queries/observed-population.sql > $id-obs.csv || {
-            rm $id-obs.csv && false
+        wc -l $FAILS
+        psql backblaze -f queries/observed-population.sql > $OBSCT || {
+            rm $OBSCT && false
         }
-        wc -l $id-obs.csv
+        wc -l $OBSCT
     fi
-    echo "$id-plot.svg|$id-fails.csv|$id-obs.csv|$model" >> metadata
+    echo "$PLOTF|$FAILS|$OBSCT|$model" >> plot-metadata
 done

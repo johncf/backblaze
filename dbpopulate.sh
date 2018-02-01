@@ -24,4 +24,5 @@ psql backblaze -f queries/index1.sql
 set +x
 
 echo "Done!"
-echo "Edit views.sql to specify the disk model of interest, then run process.sh"
+echo "Run get-popular-models.sh script to generate popular-models table."
+echo "Then run process-all.sh"
