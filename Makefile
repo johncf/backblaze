@@ -19,7 +19,7 @@ endif
 Results.md: plot-all plot-metadata
 	./embed-plots.sh > Results.md
 
-plot-all: plot-metadata
+plot-all: plot-metadata failysis/basic-plot.py
 	./plot-all.sh | bash
 	touch plot-all
 

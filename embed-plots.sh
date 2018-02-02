@@ -15,8 +15,8 @@ do
     echo
     echo "**Total disk-years observed:** ${stats[0]} <br>"
     echo "**Total failures observed:** ${stats[1]} <br>"
-    echo "**Mean AFR over lifetime:** ${stats[2]}"
+    echo "**Mean failure rate:** ${stats[2]} per year"
     echo
-    echo "![]($plot)"
+    echo "![$model failure rate plot]({attach}$plot)"
     echo
 done
