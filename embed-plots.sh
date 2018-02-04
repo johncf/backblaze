@@ -17,6 +17,10 @@ do
     echo "**Total failures observed:** ${stats[1]} <br>"
     echo "**Mean failure rate:** ${stats[2]} per year"
     echo
+    echo "**Useful power-on span of observation:** ${stats[3]} years <br>"
+    echo "**Mean number of disks over useful span:** ${stats[4]} disks <br>"
+    echo "**Window size:** "
+    echo
     echo "![$model failure rate plot]({attach}$plot)"
     echo
 done
