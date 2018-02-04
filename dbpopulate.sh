@@ -22,4 +22,4 @@ done
 set +x
 
 echo "Done!"
-echo "Now you may run: make Results.md"
+echo "Now you may run: make plot-all Results.md"
