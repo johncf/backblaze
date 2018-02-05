@@ -6,8 +6,6 @@ CREATE VIEW disk_logs AS
 SELECT r.datestamp AS datestamp,
        r.serial AS serial_no,
        r.poh AS power_hrs,
-       r.lba_r AS blocks_read,
-       r.lba_w AS blocks_written
 FROM raw_logs AS r
 WHERE r.model = 'MMOODDEELL';
 
