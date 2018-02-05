@@ -29,7 +29,7 @@ def main(infile, outfile, title):
     xs, dct, fct = read_csv(infile)
 
     fig, (ax1, ax2) = plt.subplots(2, 1, gridspec_kw={'height_ratios': [2, 1]},
-                                   figsize=(6, 6), sharex=True)
+                                   figsize=(7, 6), sharex=True)
     st = fig.suptitle(title)
     fig.tight_layout()
     st.set_y(0.95)
